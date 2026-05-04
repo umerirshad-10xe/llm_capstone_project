@@ -25,11 +25,12 @@ class RMSNorm(nn.Module):
     def __init__(self, dim: int, eps: float = 1e-5):
         super().__init__()
         # TODO
-        raise NotImplementedError
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
 
     def forward(self, x):
         # TODO
-        raise NotImplementedError
+        return self.weight * (x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps))
 
 class SwiGLU(nn.Module):
     """SwiGLU MLP: gated feedforward.
@@ -47,11 +48,15 @@ class SwiGLU(nn.Module):
     def __init__(self, dim: int, mult: int):
         super().__init__()
         # TODO
-        raise NotImplementedError
+        hidden_dim = mult * dim
+        self.w1 = nn.Linear(dim, hidden_dim, bias=False)
+        self.w2 = nn.Linear(dim, hidden_dim, bias=False)
+        self.w3 = nn.Linear(hidden_dim, dim, bias=False)
+        self.dropout = nn.Dropout(cfg.dropout)
 
     def forward(self, x):
         # TODO
-        raise NotImplementedError
+        return self.dropout(self.w3(F.silu(self.w1(x)) * self.w2(x)))
 
 class MultiHeadSelfAttention(nn.Module):
     """Masked Multi-Head Self-Attention (MHA).
@@ -67,11 +72,39 @@ class MultiHeadSelfAttention(nn.Module):
     def __init__(self):
         super().__init__()
         # TODO
-        raise NotImplementedError
+        assert cfg.n_embd % cfg.n_head == 0
+        self.n_head = cfg.n_head
+        self.n_embd = cfg.n_embd
+        self.head_dim = cfg.n_embd // cfg.n_head
+        self.q_proj = nn.Linear(cfg.n_embd, cfg.n_embd, bias=False)
+        self.k_proj = nn.Linear(cfg.n_embd, cfg.n_embd, bias=False)
+        self.v_proj = nn.Linear(cfg.n_embd, cfg.n_embd, bias=False)
+        self.c_proj = nn.Linear(cfg.n_embd, cfg.n_embd, bias=False)
+        self.register_buffer("bias", torch.tril(torch.ones(cfg.block_size, cfg.block_size))
+                                     .view(1, 1, cfg.block_size, cfg.block_size))
 
     def forward(self, x):
         # TODO
-        raise NotImplementedError
+        B, T, C = x.size() # batch size, sequence length, embedding dimensionality (n_embd)
+
+        # calculate query, key, values for all heads in batch and move head forward to be the batch dim
+        q = self.q_proj(x)
+        k = self.k_proj(x)
+        v = self.v_proj(x)
+        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
+        q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
+        v = v.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
+
+        # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
+        att = (q @ k.transpose(-2, -1)) * (1.0 / (k.size(-1) ** 0.5))
+        att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
+        att = F.softmax(att, dim=-1)
+        y = att @ v # (B, nh, T, T) x (B, nh, T, hs) -> (B, nh, T, hs)
+        y = y.transpose(1, 2).contiguous().view(B, T, C) # re-assemble all head outputs side by side
+
+        # output projection
+        y = self.c_proj(y)
+        return y
 
 class GroupedQuerySelfAttention(nn.Module):
     """Masked Grouped-Query Attention (GQA).
@@ -91,11 +124,40 @@ class GroupedQuerySelfAttention(nn.Module):
     def __init__(self):
         super().__init__()
         # TODO
-        raise NotImplementedError
+        assert cfg.n_head % cfg.n_kv_head == 0
+        self.n_head = cfg.n_head
+        self.n_kv_head = cfg.n_kv_head
+        self.n_embd = cfg.n_embd
+        self.head_dim = cfg.n_embd // cfg.n_head
+        self.n_rep = cfg.n_head // cfg.n_kv_head
+        self.q_proj = nn.Linear(cfg.n_embd, cfg.n_embd, bias=False)
+        self.k_proj = nn.Linear(cfg.n_embd, cfg.n_kv_head * self.head_dim, bias=False)
+        self.v_proj = nn.Linear(cfg.n_embd, cfg.n_kv_head * self.head_dim, bias=False)
+        self.c_proj = nn.Linear(cfg.n_embd, cfg.n_embd, bias=False)
+        self.register_buffer("bias", torch.tril(torch.ones(cfg.block_size, cfg.block_size))
+                                     .view(1, 1, cfg.block_size, cfg.block_size))
 
     def forward(self, x):
         # TODO
-        raise NotImplementedError
+        B, T, C = x.size()
+        q = self.q_proj(x)
+        k = self.k_proj(x)
+        v = self.v_proj(x)
+        q = q.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
+        k = k.view(B, T, self.n_kv_head, self.head_dim).transpose(1, 2)
+        v = v.view(B, T, self.n_kv_head, self.head_dim).transpose(1, 2)
+        
+        # repeat k and v for each group
+        k = k.repeat_interleave(self.n_rep, dim=1)
+        v = v.repeat_interleave(self.n_rep, dim=1)
+        
+        att = (q @ k.transpose(-2, -1)) * (1.0 / (k.size(-1) ** 0.5))
+        att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
+        att = F.softmax(att, dim=-1)
+        y = att @ v
+        y = y.transpose(1, 2).contiguous().view(B, T, C)
+        y = self.c_proj(y)
+        return y
 
 class Block_MHA_RMS_SwiGLU(nn.Module):
     """Modern block: RMSNorm + MHA + SwiGLU.
@@ -107,22 +169,32 @@ class Block_MHA_RMS_SwiGLU(nn.Module):
     def __init__(self):
         super().__init__()
         # TODO
-        raise NotImplementedError
+        self.attn = MultiHeadSelfAttention()
+        self.mlp = SwiGLU(cfg.n_embd, cfg.ff_mult)
+        self.attn_norm = RMSNorm(cfg.n_embd)
+        self.mlp_norm = RMSNorm(cfg.n_embd)
 
     def forward(self, x):
         # TODO
-        raise NotImplementedError
+        x = x + self.attn(self.attn_norm(x))
+        x = x + self.mlp(self.mlp_norm(x))
+        return x
 
 class Block_GQA_RMS_SwiGLU(nn.Module):
     """Modern block: RMSNorm + GQA + SwiGLU."""
     def __init__(self):
         super().__init__()
         # TODO
-        raise NotImplementedError
+        self.attn = GroupedQuerySelfAttention()
+        self.mlp = SwiGLU(cfg.n_embd, cfg.ff_mult)
+        self.attn_norm = RMSNorm(cfg.n_embd)
+        self.mlp_norm = RMSNorm(cfg.n_embd)
 
     def forward(self, x):
         # TODO
-        raise NotImplementedError
+        x = x + self.attn(self.attn_norm(x))
+        x = x + self.mlp(self.mlp_norm(x))
+        return x
 
 class MHA_ModernLanguageModel(nn.Module):
     """Full LM using modern MHA blocks."""
@@ -133,29 +205,81 @@ class MHA_ModernLanguageModel(nn.Module):
         # - position embedding table
         # - stack cfg.n_layer blocks
         # - final norm + lm_head
-        raise NotImplementedError
+        self.token_embedding_table = nn.Embedding(vocab_size, cfg.n_embd)
+        self.position_embedding_table = nn.Embedding(cfg.block_size, cfg.n_embd)
+        self.blocks = nn.ModuleList([Block_MHA_RMS_SwiGLU() for _ in range(cfg.n_layer)])
+        self.ln_f = RMSNorm(cfg.n_embd)
+        self.lm_head = nn.Linear(cfg.n_embd, vocab_size, bias=False)
 
     def forward(self, idx, targets=None):
         # TODO
-        raise NotImplementedError
+        B, T = idx.shape
+        tok_emb = self.token_embedding_table(idx)
+        pos_emb = self.position_embedding_table(torch.arange(T, device=idx.device))
+        x = tok_emb + pos_emb
+        for block in self.blocks:
+            x = block(x)
+        x = self.ln_f(x)
+        logits = self.lm_head(x)
+        
+        if targets is None:
+            loss = None
+        else:
+            logits = logits.view(-1, logits.size(-1))
+            targets = targets.view(-1)
+            loss = F.cross_entropy(logits, targets)
+        return logits, loss
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens: int):
         # TODO
-        raise NotImplementedError
+        for _ in range(max_new_tokens):
+            idx_cond = idx[:, -cfg.block_size:]
+            logits, _ = self(idx_cond)
+            logits = logits[:, -1, :]
+            probs = F.softmax(logits, dim=-1)
+            idx_next = torch.multinomial(probs, num_samples=1)
+            idx = torch.cat((idx, idx_next), dim=1)
+        return idx
 
 class GQA_ModernLanguageModel(nn.Module):
     """Full LM using modern GQA blocks."""
     def __init__(self, vocab_size: int):
         super().__init__()
         # TODO
-        raise NotImplementedError
+        self.token_embedding_table = nn.Embedding(vocab_size, cfg.n_embd)
+        self.position_embedding_table = nn.Embedding(cfg.block_size, cfg.n_embd)
+        self.blocks = nn.ModuleList([Block_GQA_RMS_SwiGLU() for _ in range(cfg.n_layer)])
+        self.ln_f = RMSNorm(cfg.n_embd)
+        self.lm_head = nn.Linear(cfg.n_embd, vocab_size, bias=False)
 
     def forward(self, idx, targets=None):
         # TODO
-        raise NotImplementedError
+        B, T = idx.shape
+        tok_emb = self.token_embedding_table(idx)
+        pos_emb = self.position_embedding_table(torch.arange(T, device=idx.device))
+        x = tok_emb + pos_emb
+        for block in self.blocks:
+            x = block(x)
+        x = self.ln_f(x)
+        logits = self.lm_head(x)
+        
+        if targets is None:
+            loss = None
+        else:
+            logits = logits.view(-1, logits.size(-1))
+            targets = targets.view(-1)
+            loss = F.cross_entropy(logits, targets)
+        return logits, loss
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens: int):
         # TODO
-        raise NotImplementedError
+        for _ in range(max_new_tokens):
+            idx_cond = idx[:, -cfg.block_size:]
+            logits, _ = self(idx_cond)
+            logits = logits[:, -1, :]
+            probs = F.softmax(logits, dim=-1)
+            idx_next = torch.multinomial(probs, num_samples=1)
+            idx = torch.cat((idx, idx_next), dim=1)
+        return idx

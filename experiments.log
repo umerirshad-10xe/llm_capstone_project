@@ -1,0 +1,219 @@
+Part 4 experiment run
+steps=100, eval_every=20, eval_iters=30, n_heads=[4, 8], n_layers=[2, 4], lrs=[0.001, 0.0003], n_kv_heads=[2, 4]
+
+Starting MHA_h4_l2_lr0.001
+[MHA_h4_l2_lr0.001] step    1/100 | train_loss=4.2612 val_loss=4.2701 | train_acc=0.0219 val_acc=0.0200
+[MHA_h4_l2_lr0.001] step   20/100 | train_loss=2.9266 val_loss=2.9611 | train_acc=0.2330 val_acc=0.2301
+[MHA_h4_l2_lr0.001] step   40/100 | train_loss=2.6858 val_loss=2.6761 | train_acc=0.2544 val_acc=0.2526
+[MHA_h4_l2_lr0.001] step   60/100 | train_loss=2.5926 val_loss=2.6027 | train_acc=0.2599 val_acc=0.2634
+[MHA_h4_l2_lr0.001] step   80/100 | train_loss=2.5385 val_loss=2.5604 | train_acc=0.2649 val_acc=0.2643
+[MHA_h4_l2_lr0.001] step  100/100 | train_loss=2.5171 val_loss=2.5195 | train_acc=0.2703 val_acc=0.2715
+Finished MHA_h4_l2_lr0.001
+
+Starting MHA_h4_l2_lr0.0003
+[MHA_h4_l2_lr0.0003] step    1/100 | train_loss=4.3068 val_loss=4.3086 | train_acc=0.0161 val_acc=0.0167
+[MHA_h4_l2_lr0.0003] step   20/100 | train_loss=3.6583 val_loss=3.6651 | train_acc=0.1526 val_acc=0.1551
+[MHA_h4_l2_lr0.0003] step   40/100 | train_loss=3.1087 val_loss=3.1402 | train_acc=0.2092 val_acc=0.2134
+[MHA_h4_l2_lr0.0003] step   60/100 | train_loss=2.8876 val_loss=2.9369 | train_acc=0.2429 val_acc=0.2398
+[MHA_h4_l2_lr0.0003] step   80/100 | train_loss=2.7785 val_loss=2.8029 | train_acc=0.2476 val_acc=0.2422
+[MHA_h4_l2_lr0.0003] step  100/100 | train_loss=2.7055 val_loss=2.7298 | train_acc=0.2594 val_acc=0.2498
+Finished MHA_h4_l2_lr0.0003
+
+Starting MHA_h4_l4_lr0.001
+[MHA_h4_l4_lr0.001] step    1/100 | train_loss=4.1467 val_loss=4.1435 | train_acc=0.0389 val_acc=0.0394
+[MHA_h4_l4_lr0.001] step   20/100 | train_loss=2.8701 val_loss=2.8974 | train_acc=0.2475 val_acc=0.2458
+[MHA_h4_l4_lr0.001] step   40/100 | train_loss=2.6522 val_loss=2.6274 | train_acc=0.2541 val_acc=0.2597
+[MHA_h4_l4_lr0.001] step   60/100 | train_loss=2.5480 val_loss=2.5630 | train_acc=0.2694 val_acc=0.2654
+[MHA_h4_l4_lr0.001] step   80/100 | train_loss=2.5314 val_loss=2.5269 | train_acc=0.2664 val_acc=0.2672
+[MHA_h4_l4_lr0.001] step  100/100 | train_loss=2.5073 val_loss=2.5142 | train_acc=0.2721 val_acc=0.2651
+Finished MHA_h4_l4_lr0.001
+
+Starting MHA_h4_l4_lr0.0003
+[MHA_h4_l4_lr0.0003] step    1/100 | train_loss=4.3369 val_loss=4.3503 | train_acc=0.0114 val_acc=0.0104
+[MHA_h4_l4_lr0.0003] step   20/100 | train_loss=3.3541 val_loss=3.3904 | train_acc=0.1689 val_acc=0.1673
+[MHA_h4_l4_lr0.0003] step   40/100 | train_loss=3.0294 val_loss=3.0506 | train_acc=0.2203 val_acc=0.2163
+[MHA_h4_l4_lr0.0003] step   60/100 | train_loss=2.8180 val_loss=2.8346 | train_acc=0.2463 val_acc=0.2451
+[MHA_h4_l4_lr0.0003] step   80/100 | train_loss=2.7107 val_loss=2.7185 | train_acc=0.2601 val_acc=0.2568
+[MHA_h4_l4_lr0.0003] step  100/100 | train_loss=2.6346 val_loss=2.6580 | train_acc=0.2628 val_acc=0.2576
+Finished MHA_h4_l4_lr0.0003
+
+Starting MHA_h8_l2_lr0.001
+[MHA_h8_l2_lr0.001] step    1/100 | train_loss=4.1965 val_loss=4.1932 | train_acc=0.0213 val_acc=0.0223
+[MHA_h8_l2_lr0.001] step   20/100 | train_loss=2.9377 val_loss=2.9769 | train_acc=0.2362 val_acc=0.2326
+[MHA_h8_l2_lr0.001] step   40/100 | train_loss=2.6763 val_loss=2.6919 | train_acc=0.2558 val_acc=0.2532
+[MHA_h8_l2_lr0.001] step   60/100 | train_loss=2.5926 val_loss=2.5868 | train_acc=0.2617 val_acc=0.2648
+[MHA_h8_l2_lr0.001] step   80/100 | train_loss=2.5304 val_loss=2.5384 | train_acc=0.2695 val_acc=0.2670
+[MHA_h8_l2_lr0.001] step  100/100 | train_loss=2.5319 val_loss=2.5219 | train_acc=0.2677 val_acc=0.2681
+Finished MHA_h8_l2_lr0.001
+
+Starting MHA_h8_l2_lr0.0003
+[MHA_h8_l2_lr0.0003] step    1/100 | train_loss=4.3165 val_loss=4.3232 | train_acc=0.0151 val_acc=0.0151
+[MHA_h8_l2_lr0.0003] step   20/100 | train_loss=3.6311 val_loss=3.6484 | train_acc=0.1655 val_acc=0.1635
+[MHA_h8_l2_lr0.0003] step   40/100 | train_loss=3.1314 val_loss=3.1551 | train_acc=0.2047 val_acc=0.2038
+[MHA_h8_l2_lr0.0003] step   60/100 | train_loss=2.9286 val_loss=2.9357 | train_acc=0.2274 val_acc=0.2314
+[MHA_h8_l2_lr0.0003] step   80/100 | train_loss=2.7875 val_loss=2.8198 | train_acc=0.2435 val_acc=0.2451
+[MHA_h8_l2_lr0.0003] step  100/100 | train_loss=2.7069 val_loss=2.7319 | train_acc=0.2516 val_acc=0.2465
+Finished MHA_h8_l2_lr0.0003
+
+Starting MHA_h8_l4_lr0.001
+[MHA_h8_l4_lr0.001] step    1/100 | train_loss=4.2278 val_loss=4.2314 | train_acc=0.0205 val_acc=0.0185
+[MHA_h8_l4_lr0.001] step   20/100 | train_loss=2.8921 val_loss=2.9261 | train_acc=0.2364 val_acc=0.2366
+[MHA_h8_l4_lr0.001] step   40/100 | train_loss=2.6476 val_loss=2.6405 | train_acc=0.2612 val_acc=0.2594
+[MHA_h8_l4_lr0.001] step   60/100 | train_loss=2.5604 val_loss=2.5648 | train_acc=0.2634 val_acc=0.2674
+[MHA_h8_l4_lr0.001] step   80/100 | train_loss=2.5268 val_loss=2.5257 | train_acc=0.2650 val_acc=0.2671
+[MHA_h8_l4_lr0.001] step  100/100 | train_loss=2.5083 val_loss=2.5150 | train_acc=0.2731 val_acc=0.2712
+Finished MHA_h8_l4_lr0.001
+
+Starting MHA_h8_l4_lr0.0003
+[MHA_h8_l4_lr0.0003] step    1/100 | train_loss=4.2899 val_loss=4.2915 | train_acc=0.0178 val_acc=0.0166
+[MHA_h8_l4_lr0.0003] step   20/100 | train_loss=3.3317 val_loss=3.3618 | train_acc=0.1742 val_acc=0.1686
+[MHA_h8_l4_lr0.0003] step   40/100 | train_loss=3.0187 val_loss=3.0507 | train_acc=0.2293 val_acc=0.2319
+[MHA_h8_l4_lr0.0003] step   60/100 | train_loss=2.8392 val_loss=2.8595 | train_acc=0.2457 val_acc=0.2474
+[MHA_h8_l4_lr0.0003] step   80/100 | train_loss=2.7370 val_loss=2.7522 | train_acc=0.2527 val_acc=0.2567
+[MHA_h8_l4_lr0.0003] step  100/100 | train_loss=2.6487 val_loss=2.6638 | train_acc=0.2664 val_acc=0.2609
+Finished MHA_h8_l4_lr0.0003
+
+Starting GQA_h4_kv2_l2_lr0.001
+[GQA_h4_kv2_l2_lr0.001] step    1/100 | train_loss=4.2312 val_loss=4.2279 | train_acc=0.0228 val_acc=0.0233
+[GQA_h4_kv2_l2_lr0.001] step   20/100 | train_loss=2.9495 val_loss=2.9716 | train_acc=0.2309 val_acc=0.2317
+[GQA_h4_kv2_l2_lr0.001] step   40/100 | train_loss=2.6989 val_loss=2.7018 | train_acc=0.2549 val_acc=0.2535
+[GQA_h4_kv2_l2_lr0.001] step   60/100 | train_loss=2.5918 val_loss=2.6110 | train_acc=0.2603 val_acc=0.2573
+[GQA_h4_kv2_l2_lr0.001] step   80/100 | train_loss=2.5548 val_loss=2.5441 | train_acc=0.2664 val_acc=0.2651
+[GQA_h4_kv2_l2_lr0.001] step  100/100 | train_loss=2.5295 val_loss=2.5396 | train_acc=0.2630 val_acc=0.2617
+Finished GQA_h4_kv2_l2_lr0.001
+
+Starting GQA_h4_kv4_l2_lr0.001
+[GQA_h4_kv4_l2_lr0.001] step    1/100 | train_loss=4.2471 val_loss=4.2527 | train_acc=0.0254 val_acc=0.0247
+[GQA_h4_kv4_l2_lr0.001] step   20/100 | train_loss=2.9420 val_loss=2.9841 | train_acc=0.2380 val_acc=0.2352
+[GQA_h4_kv4_l2_lr0.001] step   40/100 | train_loss=2.6614 val_loss=2.6645 | train_acc=0.2547 val_acc=0.2530
+[GQA_h4_kv4_l2_lr0.001] step   60/100 | train_loss=2.5673 val_loss=2.5707 | train_acc=0.2700 val_acc=0.2691
+[GQA_h4_kv4_l2_lr0.001] step   80/100 | train_loss=2.5442 val_loss=2.5376 | train_acc=0.2599 val_acc=0.2647
+[GQA_h4_kv4_l2_lr0.001] step  100/100 | train_loss=2.5067 val_loss=2.5258 | train_acc=0.2681 val_acc=0.2666
+Finished GQA_h4_kv4_l2_lr0.001
+
+Starting GQA_h4_kv2_l2_lr0.0003
+[GQA_h4_kv2_l2_lr0.0003] step    1/100 | train_loss=4.3236 val_loss=4.3205 | train_acc=0.0128 val_acc=0.0134
+[GQA_h4_kv2_l2_lr0.0003] step   20/100 | train_loss=3.5840 val_loss=3.6172 | train_acc=0.1493 val_acc=0.1423
+[GQA_h4_kv2_l2_lr0.0003] step   40/100 | train_loss=3.1150 val_loss=3.1489 | train_acc=0.2034 val_acc=0.2001
+[GQA_h4_kv2_l2_lr0.0003] step   60/100 | train_loss=2.9138 val_loss=2.9233 | train_acc=0.2382 val_acc=0.2426
+[GQA_h4_kv2_l2_lr0.0003] step   80/100 | train_loss=2.7826 val_loss=2.7818 | train_acc=0.2462 val_acc=0.2525
+[GQA_h4_kv2_l2_lr0.0003] step  100/100 | train_loss=2.7270 val_loss=2.7187 | train_acc=0.2505 val_acc=0.2529
+Finished GQA_h4_kv2_l2_lr0.0003
+
+Starting GQA_h4_kv4_l2_lr0.0003
+[GQA_h4_kv4_l2_lr0.0003] step    1/100 | train_loss=4.2719 val_loss=4.2725 | train_acc=0.0227 val_acc=0.0215
+[GQA_h4_kv4_l2_lr0.0003] step   20/100 | train_loss=3.5694 val_loss=3.5792 | train_acc=0.1646 val_acc=0.1649
+[GQA_h4_kv4_l2_lr0.0003] step   40/100 | train_loss=3.1152 val_loss=3.1413 | train_acc=0.2173 val_acc=0.2164
+[GQA_h4_kv4_l2_lr0.0003] step   60/100 | train_loss=2.9008 val_loss=2.9318 | train_acc=0.2456 val_acc=0.2437
+[GQA_h4_kv4_l2_lr0.0003] step   80/100 | train_loss=2.7742 val_loss=2.8050 | train_acc=0.2493 val_acc=0.2467
+[GQA_h4_kv4_l2_lr0.0003] step  100/100 | train_loss=2.7064 val_loss=2.7184 | train_acc=0.2549 val_acc=0.2550
+Finished GQA_h4_kv4_l2_lr0.0003
+
+Starting GQA_h4_kv2_l4_lr0.001
+[GQA_h4_kv2_l4_lr0.001] step    1/100 | train_loss=4.1463 val_loss=4.1502 | train_acc=0.0355 val_acc=0.0343
+[GQA_h4_kv2_l4_lr0.001] step   20/100 | train_loss=2.8407 val_loss=2.8610 | train_acc=0.2473 val_acc=0.2496
+[GQA_h4_kv2_l4_lr0.001] step   40/100 | train_loss=2.6241 val_loss=2.6438 | train_acc=0.2597 val_acc=0.2583
+[GQA_h4_kv2_l4_lr0.001] step   60/100 | train_loss=2.5448 val_loss=2.5718 | train_acc=0.2744 val_acc=0.2648
+[GQA_h4_kv2_l4_lr0.001] step   80/100 | train_loss=2.5355 val_loss=2.5469 | train_acc=0.2663 val_acc=0.2661
+[GQA_h4_kv2_l4_lr0.001] step  100/100 | train_loss=2.5065 val_loss=2.5122 | train_acc=0.2792 val_acc=0.2715
+Finished GQA_h4_kv2_l4_lr0.001
+
+Starting GQA_h4_kv4_l4_lr0.001
+[GQA_h4_kv4_l4_lr0.001] step    1/100 | train_loss=4.1271 val_loss=4.1247 | train_acc=0.0410 val_acc=0.0426
+[GQA_h4_kv4_l4_lr0.001] step   20/100 | train_loss=2.8868 val_loss=2.9120 | train_acc=0.2428 val_acc=0.2392
+[GQA_h4_kv4_l4_lr0.001] step   40/100 | train_loss=2.6326 val_loss=2.6462 | train_acc=0.2558 val_acc=0.2540
+[GQA_h4_kv4_l4_lr0.001] step   60/100 | train_loss=2.5676 val_loss=2.5850 | train_acc=0.2639 val_acc=0.2641
+[GQA_h4_kv4_l4_lr0.001] step   80/100 | train_loss=2.5418 val_loss=2.5525 | train_acc=0.2619 val_acc=0.2685
+[GQA_h4_kv4_l4_lr0.001] step  100/100 | train_loss=2.5090 val_loss=2.5092 | train_acc=0.2661 val_acc=0.2704
+Finished GQA_h4_kv4_l4_lr0.001
+
+Starting GQA_h4_kv2_l4_lr0.0003
+[GQA_h4_kv2_l4_lr0.0003] step    1/100 | train_loss=4.2564 val_loss=4.2542 | train_acc=0.0187 val_acc=0.0196
+[GQA_h4_kv2_l4_lr0.0003] step   20/100 | train_loss=3.3222 val_loss=3.3317 | train_acc=0.1809 val_acc=0.1803
+[GQA_h4_kv2_l4_lr0.0003] step   40/100 | train_loss=3.0242 val_loss=3.0190 | train_acc=0.2211 val_acc=0.2234
+[GQA_h4_kv2_l4_lr0.0003] step   60/100 | train_loss=2.8208 val_loss=2.8321 | train_acc=0.2480 val_acc=0.2475
+[GQA_h4_kv2_l4_lr0.0003] step   80/100 | train_loss=2.7173 val_loss=2.7402 | train_acc=0.2511 val_acc=0.2517
+[GQA_h4_kv2_l4_lr0.0003] step  100/100 | train_loss=2.6535 val_loss=2.6604 | train_acc=0.2577 val_acc=0.2619
+Finished GQA_h4_kv2_l4_lr0.0003
+
+Starting GQA_h4_kv4_l4_lr0.0003
+[GQA_h4_kv4_l4_lr0.0003] step    1/100 | train_loss=4.2915 val_loss=4.2933 | train_acc=0.0264 val_acc=0.0272
+[GQA_h4_kv4_l4_lr0.0003] step   20/100 | train_loss=3.3444 val_loss=3.3804 | train_acc=0.1897 val_acc=0.1827
+[GQA_h4_kv4_l4_lr0.0003] step   40/100 | train_loss=3.0424 val_loss=3.0794 | train_acc=0.2146 val_acc=0.2161
+[GQA_h4_kv4_l4_lr0.0003] step   60/100 | train_loss=2.8463 val_loss=2.8583 | train_acc=0.2469 val_acc=0.2474
+[GQA_h4_kv4_l4_lr0.0003] step   80/100 | train_loss=2.7253 val_loss=2.7538 | train_acc=0.2496 val_acc=0.2491
+[GQA_h4_kv4_l4_lr0.0003] step  100/100 | train_loss=2.6643 val_loss=2.6400 | train_acc=0.2557 val_acc=0.2633
+Finished GQA_h4_kv4_l4_lr0.0003
+
+Starting GQA_h8_kv2_l2_lr0.001
+[GQA_h8_kv2_l2_lr0.001] step    1/100 | train_loss=4.2669 val_loss=4.2613 | train_acc=0.0181 val_acc=0.0202
+[GQA_h8_kv2_l2_lr0.001] step   20/100 | train_loss=2.9706 val_loss=2.9925 | train_acc=0.2278 val_acc=0.2268
+[GQA_h8_kv2_l2_lr0.001] step   40/100 | train_loss=2.6803 val_loss=2.6972 | train_acc=0.2480 val_acc=0.2521
+[GQA_h8_kv2_l2_lr0.001] step   60/100 | train_loss=2.5923 val_loss=2.5941 | train_acc=0.2620 val_acc=0.2699
+[GQA_h8_kv2_l2_lr0.001] step   80/100 | train_loss=2.5504 val_loss=2.5434 | train_acc=0.2653 val_acc=0.2646
+[GQA_h8_kv2_l2_lr0.001] step  100/100 | train_loss=2.5238 val_loss=2.5290 | train_acc=0.2658 val_acc=0.2639
+Finished GQA_h8_kv2_l2_lr0.001
+
+Starting GQA_h8_kv4_l2_lr0.001
+[GQA_h8_kv4_l2_lr0.001] step    1/100 | train_loss=4.1761 val_loss=4.1688 | train_acc=0.0258 val_acc=0.0271
+[GQA_h8_kv4_l2_lr0.001] step   20/100 | train_loss=2.9212 val_loss=2.9385 | train_acc=0.2391 val_acc=0.2354
+[GQA_h8_kv4_l2_lr0.001] step   40/100 | train_loss=2.6801 val_loss=2.6731 | train_acc=0.2531 val_acc=0.2532
+[GQA_h8_kv4_l2_lr0.001] step   60/100 | train_loss=2.5780 val_loss=2.5833 | train_acc=0.2659 val_acc=0.2667
+[GQA_h8_kv4_l2_lr0.001] step   80/100 | train_loss=2.5435 val_loss=2.5360 | train_acc=0.2649 val_acc=0.2719
+[GQA_h8_kv4_l2_lr0.001] step  100/100 | train_loss=2.5128 val_loss=2.5140 | train_acc=0.2732 val_acc=0.2755
+Finished GQA_h8_kv4_l2_lr0.001
+
+Starting GQA_h8_kv2_l2_lr0.0003
+[GQA_h8_kv2_l2_lr0.0003] step    1/100 | train_loss=4.3321 val_loss=4.3347 | train_acc=0.0125 val_acc=0.0124
+[GQA_h8_kv2_l2_lr0.0003] step   20/100 | train_loss=3.6663 val_loss=3.6824 | train_acc=0.1640 val_acc=0.1615
+[GQA_h8_kv2_l2_lr0.0003] step   40/100 | train_loss=3.0966 val_loss=3.1398 | train_acc=0.2020 val_acc=0.1973
+[GQA_h8_kv2_l2_lr0.0003] step   60/100 | train_loss=2.9158 val_loss=2.9259 | train_acc=0.2385 val_acc=0.2399
+[GQA_h8_kv2_l2_lr0.0003] step   80/100 | train_loss=2.7907 val_loss=2.8264 | train_acc=0.2417 val_acc=0.2393
+[GQA_h8_kv2_l2_lr0.0003] step  100/100 | train_loss=2.7095 val_loss=2.7358 | train_acc=0.2526 val_acc=0.2479
+Finished GQA_h8_kv2_l2_lr0.0003
+
+Starting GQA_h8_kv4_l2_lr0.0003
+[GQA_h8_kv4_l2_lr0.0003] step    1/100 | train_loss=4.2812 val_loss=4.2927 | train_acc=0.0128 val_acc=0.0140
+[GQA_h8_kv4_l2_lr0.0003] step   20/100 | train_loss=3.5927 val_loss=3.6138 | train_acc=0.1644 val_acc=0.1637
+[GQA_h8_kv4_l2_lr0.0003] step   40/100 | train_loss=3.1232 val_loss=3.1561 | train_acc=0.2047 val_acc=0.2019
+[GQA_h8_kv4_l2_lr0.0003] step   60/100 | train_loss=2.8986 val_loss=2.9208 | train_acc=0.2358 val_acc=0.2351
+[GQA_h8_kv4_l2_lr0.0003] step   80/100 | train_loss=2.7766 val_loss=2.7980 | train_acc=0.2460 val_acc=0.2424
+[GQA_h8_kv4_l2_lr0.0003] step  100/100 | train_loss=2.7134 val_loss=2.7225 | train_acc=0.2493 val_acc=0.2517
+Finished GQA_h8_kv4_l2_lr0.0003
+
+Starting GQA_h8_kv2_l4_lr0.001
+[GQA_h8_kv2_l4_lr0.001] step    1/100 | train_loss=4.1400 val_loss=4.1517 | train_acc=0.0361 val_acc=0.0332
+[GQA_h8_kv2_l4_lr0.001] step   20/100 | train_loss=2.8864 val_loss=2.9232 | train_acc=0.2434 val_acc=0.2425
+[GQA_h8_kv2_l4_lr0.001] step   40/100 | train_loss=2.6478 val_loss=2.6632 | train_acc=0.2576 val_acc=0.2524
+[GQA_h8_kv2_l4_lr0.001] step   60/100 | train_loss=2.5692 val_loss=2.5748 | train_acc=0.2629 val_acc=0.2615
+[GQA_h8_kv2_l4_lr0.001] step   80/100 | train_loss=2.5416 val_loss=2.5345 | train_acc=0.2659 val_acc=0.2676
+[GQA_h8_kv2_l4_lr0.001] step  100/100 | train_loss=2.5157 val_loss=2.5213 | train_acc=0.2729 val_acc=0.2712
+Finished GQA_h8_kv2_l4_lr0.001
+
+Starting GQA_h8_kv4_l4_lr0.001
+[GQA_h8_kv4_l4_lr0.001] step    1/100 | train_loss=4.1558 val_loss=4.1660 | train_acc=0.0363 val_acc=0.0344
+[GQA_h8_kv4_l4_lr0.001] step   20/100 | train_loss=2.8882 val_loss=2.8843 | train_acc=0.2457 val_acc=0.2483
+[GQA_h8_kv4_l4_lr0.001] step   40/100 | train_loss=2.6433 val_loss=2.6647 | train_acc=0.2617 val_acc=0.2582
+[GQA_h8_kv4_l4_lr0.001] step   60/100 | train_loss=2.5735 val_loss=2.5685 | train_acc=0.2601 val_acc=0.2654
+[GQA_h8_kv4_l4_lr0.001] step   80/100 | train_loss=2.5323 val_loss=2.5414 | train_acc=0.2682 val_acc=0.2669
+[GQA_h8_kv4_l4_lr0.001] step  100/100 | train_loss=2.5062 val_loss=2.5358 | train_acc=0.2720 val_acc=0.2645
+Finished GQA_h8_kv4_l4_lr0.001
+
+Starting GQA_h8_kv2_l4_lr0.0003
+[GQA_h8_kv2_l4_lr0.0003] step    1/100 | train_loss=4.3013 val_loss=4.3030 | train_acc=0.0173 val_acc=0.0179
+[GQA_h8_kv2_l4_lr0.0003] step   20/100 | train_loss=3.3634 val_loss=3.3987 | train_acc=0.1915 val_acc=0.1854
+[GQA_h8_kv2_l4_lr0.0003] step   40/100 | train_loss=2.9859 val_loss=3.0205 | train_acc=0.2356 val_acc=0.2367
+[GQA_h8_kv2_l4_lr0.0003] step   60/100 | train_loss=2.8051 val_loss=2.8338 | train_acc=0.2417 val_acc=0.2371
+[GQA_h8_kv2_l4_lr0.0003] step   80/100 | train_loss=2.6961 val_loss=2.7193 | train_acc=0.2533 val_acc=0.2501
+[GQA_h8_kv2_l4_lr0.0003] step  100/100 | train_loss=2.6322 val_loss=2.6471 | train_acc=0.2632 val_acc=0.2593
+Finished GQA_h8_kv2_l4_lr0.0003
+
+Starting GQA_h8_kv4_l4_lr0.0003
+[GQA_h8_kv4_l4_lr0.0003] step    1/100 | train_loss=4.2674 val_loss=4.2691 | train_acc=0.0220 val_acc=0.0215
+[GQA_h8_kv4_l4_lr0.0003] step   20/100 | train_loss=3.3355 val_loss=3.3742 | train_acc=0.1795 val_acc=0.1705
+[GQA_h8_kv4_l4_lr0.0003] step   40/100 | train_loss=3.0403 val_loss=3.0432 | train_acc=0.2237 val_acc=0.2238
+[GQA_h8_kv4_l4_lr0.0003] step   60/100 | train_loss=2.8319 val_loss=2.8374 | train_acc=0.2461 val_acc=0.2432
+[GQA_h8_kv4_l4_lr0.0003] step   80/100 | train_loss=2.7271 val_loss=2.7338 | train_acc=0.2491 val_acc=0.2511
+[GQA_h8_kv4_l4_lr0.0003] step  100/100 | train_loss=2.6336 val_loss=2.6547 | train_acc=0.2667 val_acc=0.2657
+Finished GQA_h8_kv4_l4_lr0.0003
+

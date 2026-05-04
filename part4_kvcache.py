@@ -36,32 +36,77 @@ class MHAWithCache(nn.Module):
     def __init__(self):
         super().__init__()
         # TODO: store cfg.n_head, compute head_dim, build qkv projections and output proj, dropouts, mask buffer
-        raise NotImplementedError
+        self.n_head = cfg.n_head
+        self.head_dim = cfg.n_embd // cfg.n_head
+        self.c_attn = nn.Linear(cfg.n_embd, 3 * cfg.n_embd, bias=False)
+        self.c_proj = nn.Linear(cfg.n_embd, cfg.n_embd, bias=False)
+        self.dropout = nn.Dropout(cfg.dropout)
+        self.register_buffer("mask", torch.tril(torch.ones(cfg.block_size, cfg.block_size)))
 
     def forward(self, x, past_kv=None):
         # TODO: implement cache-aware attention and return (out, present_kv)
-        raise NotImplementedError
+        B, T, C = x.shape
+        q, k, v = self.c_attn(x).split(cfg.n_embd, dim=2)
+        q = q.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
+        k = k.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
+        v = v.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
+        
+        if past_kv is not None:
+            past_k, past_v = past_kv
+            k = torch.cat((past_k, k), dim=2)
+            v = torch.cat((past_v, v), dim=2)
+        
+        T_total = k.shape[2]
+        att = (q @ k.transpose(-2, -1)) * (self.head_dim ** -0.5)
+        
+        if T > 1:
+            mask = self.mask[:T, :T_total]
+            att = att.masked_fill(mask == 0, float('-inf'))
+        
+        att = F.softmax(att, dim=-1)
+        att = self.dropout(att)
+        y = att @ v
+        y = y.transpose(1, 2).contiguous().view(B, T, C)
+        y = self.c_proj(y)
+        
+        present_kv = (k, v)
+        return y, present_kv
 
 class Block(nn.Module):
     """Transformer block that threads KV cache through attention."""
     def __init__(self):
         super().__init__()
         # TODO: norms, attention-with-cache, MLP
-        raise NotImplementedError
+        self.attn = MHAWithCache()
+        self.mlp = nn.Sequential(
+            nn.Linear(cfg.n_embd, 4 * cfg.n_embd),
+            nn.ReLU(),
+            nn.Linear(4 * cfg.n_embd, cfg.n_embd),
+            nn.Dropout(cfg.dropout),
+        )
+        self.ln1 = nn.LayerNorm(cfg.n_embd)
+        self.ln2 = nn.LayerNorm(cfg.n_embd)
 
     def forward(self, x, past_kv=None):
         # TODO:
         # - call attention with past_kv
         # - add residuals
         # - return (x, present_kv)
-        raise NotImplementedError
+        attn_out, present_kv = self.attn(self.ln1(x), past_kv)
+        x = x + attn_out
+        x = x + self.mlp(self.ln2(x))
+        return x, present_kv
 
 class KVCachedLanguageModel(nn.Module):
     """LM that accepts/returns a list of KV caches, one per layer."""
     def __init__(self, vocab_size: int):
         super().__init__()
         # TODO: embeddings, ModuleList of blocks, final norm, lm head
-        raise NotImplementedError
+        self.token_embedding_table = nn.Embedding(vocab_size, cfg.n_embd)
+        self.position_embedding_table = nn.Embedding(cfg.block_size, cfg.n_embd)
+        self.blocks = nn.ModuleList([Block() for _ in range(cfg.n_layer)])
+        self.ln_f = nn.LayerNorm(cfg.n_embd)
+        self.lm_head = nn.Linear(cfg.n_embd, vocab_size)
 
     def forward(self, idx, targets=None, past_kv=None):
         """Forward with caches.
@@ -77,7 +122,28 @@ class KVCachedLanguageModel(nn.Module):
         # - embed tokens/positions
         # - for each layer, pass that layer's past cache (if any)
         # - collect `presents` list to return
-        raise NotImplementedError
+        B, T = idx.shape
+        tok_emb = self.token_embedding_table(idx)
+        pos_emb = self.position_embedding_table(torch.arange(T, device=idx.device))
+        x = tok_emb + pos_emb
+        
+        presents = []
+        for i, block in enumerate(self.blocks):
+            past = past_kv[i] if past_kv else None
+            x, present = block(x, past)
+            presents.append(present)
+        
+        x = self.ln_f(x)
+        logits = self.lm_head(x)
+        
+        if targets is None:
+            loss = None
+        else:
+            logits = logits.view(-1, logits.size(-1))
+            targets = targets.view(-1)
+            loss = F.cross_entropy(logits, targets)
+        
+        return logits, loss, presents
 
     @torch.no_grad()
     def generate_kvcache(self, idx, max_new_tokens: int):
@@ -90,4 +156,13 @@ class KVCachedLanguageModel(nn.Module):
         """
         cache = None
         # TODO: implement sampling loop, updating cache each step
-        raise NotImplementedError
+        for _ in range(max_new_tokens):
+            if cache is None:
+                logits, _, cache = self(idx, past_kv=None)
+            else:
+                logits, _, cache = self(idx[:, -1:], past_kv=cache)
+            logits = logits[:, -1, :]
+            probs = F.softmax(logits, dim=-1)
+            idx_next = torch.multinomial(probs, num_samples=1)
+            idx = torch.cat((idx, idx_next), dim=1)
+        return idx

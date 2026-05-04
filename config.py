@@ -25,4 +25,6 @@ ff_mult = 4  # expansion factor for MLP hidden size
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+print("Device: ", device)
+
 torch.manual_seed(1337)

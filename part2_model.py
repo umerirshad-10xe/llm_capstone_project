@@ -13,7 +13,7 @@ class BigramBaseline(nn.Module):
     def __init__(self, vocab_size: int):
         super().__init__()
         # TODO: create a learnable lookup that returns vocab-sized logits per token id
-        raise NotImplementedError
+        self.token_embedding_table = nn.Embedding(vocab_size, vocab_size)
 
     def forward(self, idx, targets=None):
         """Return (logits, loss).
@@ -24,7 +24,17 @@ class BigramBaseline(nn.Module):
         - compute cross-entropy over all positions in the batch
         - return the scalar loss
         """
-        raise NotImplementedError
+        logits = self.token_embedding_table(idx)  # (B,T,vocab_size)
+        
+        if targets is None:
+            loss = None
+        else:
+            B, T, C = logits.shape
+            logits = logits.view(B*T, C)
+            targets = targets.view(B*T)
+            loss = F.cross_entropy(logits, targets)
+        
+        return logits, loss
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens: int):
@@ -37,7 +47,13 @@ class BigramBaseline(nn.Module):
         - sample the next token id
         - append it to the running sequence
         """
-        raise NotImplementedError
+        for _ in range(max_new_tokens):
+            logits, loss = self(idx)
+            logits = logits[:, -1, :]  # (B, vocab_size)
+            probs = F.softmax(logits, dim=-1)
+            idx_next = torch.multinomial(probs, num_samples=1)  # (B, 1)
+            idx = torch.cat((idx, idx_next), dim=1)
+        return idx
 
 class SingleHeadAttention(nn.Module):
     """One masked self-attention head.
@@ -52,7 +68,11 @@ class SingleHeadAttention(nn.Module):
         # TODO: define key/query/value projections
         # TODO: define and register a causal mask buffer
         # TODO: dropout module
-        raise NotImplementedError
+        self.key = nn.Linear(n_embd, head_size, bias=False)
+        self.query = nn.Linear(n_embd, head_size, bias=False)
+        self.value = nn.Linear(n_embd, head_size, bias=False)
+        self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
         """Compute masked self-attention.
@@ -65,7 +85,19 @@ class SingleHeadAttention(nn.Module):
         5) Apply dropout to weights
         6) Weighted sum over v to get the output
         """
-        raise NotImplementedError
+        B, T, C = x.shape
+        k = self.key(x)   # (B,T,head_size)
+        q = self.query(x) # (B,T,head_size)
+        v = self.value(x) # (B,T,head_size)
+        
+        # compute attention scores ("affinities")
+        wei = q @ k.transpose(-2,-1) * (k.shape[-1]**-0.5) # (B, T, T)
+        wei = wei.masked_fill(self.tril[:T, :T] == 0, float('-inf')) # (B, T, T)
+        wei = F.softmax(wei, dim=-1) # (B, T, T)
+        wei = self.dropout(wei)
+        # perform the weighted aggregation of the values
+        out = wei @ v # (B, T, head_size)
+        return out
 
 class FeedForward(nn.Module):
     """MLP used inside the Transformer block."""
@@ -73,17 +105,26 @@ class FeedForward(nn.Module):
         super().__init__()
         # TODO: build a small MLP that expands then contracts back to n_embd
         # (expand -> nonlinearity -> project back -> dropout)
-        raise NotImplementedError
+        self.net = nn.Sequential(
+            nn.Linear(n_embd, 4 * n_embd),
+            nn.ReLU(),
+            nn.Linear(4 * n_embd, n_embd),
+            nn.Dropout(dropout),
+        )
 
     def forward(self, x):
-        raise NotImplementedError
+        return self.net(x)
 
 class TransformerBlockSingleHead(nn.Module):
     """Transformer block using single-head attention."""
     def __init__(self):
         super().__init__()
         # TODO: create attention, feedforward, and norm modules
-        raise NotImplementedError
+        head_size = n_embd
+        self.sa = SingleHeadAttention(head_size)
+        self.ffwd = FeedForward()
+        self.ln1 = nn.LayerNorm(n_embd)
+        self.ln2 = nn.LayerNorm(n_embd)
 
     def forward(self, x):
         """Apply pre-norm residual block.
@@ -92,7 +133,9 @@ class TransformerBlockSingleHead(nn.Module):
         - residual attention: x = x + Attn(Norm(x))
         - residual MLP:       x = x + MLP(Norm(x))
         """
-        raise NotImplementedError
+        x = x + self.sa(self.ln1(x))
+        x = x + self.ffwd(self.ln2(x))
+        return x
 
 class SingleHeadLanguageModel(nn.Module):
     """Decoder-only LM using single-head Transformer blocks."""
@@ -102,7 +145,11 @@ class SingleHeadLanguageModel(nn.Module):
         # TODO: positional embedding table up to block_size
         # TODO: stack of Transformer blocks
         # TODO: final norm + linear head to vocab logits
-        raise NotImplementedError
+        self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
+        self.position_embedding_table = nn.Embedding(block_size, n_embd)
+        self.blocks = nn.Sequential(*[TransformerBlockSingleHead() for _ in range(n_layer)])
+        self.ln_f = nn.LayerNorm(n_embd) # final layer norm
+        self.lm_head = nn.Linear(n_embd, vocab_size)
 
     def forward(self, idx, targets=None):
         """Compute logits (and optional loss).
@@ -113,7 +160,25 @@ class SingleHeadLanguageModel(nn.Module):
         - final norm and linear head to vocab
         - if targets provided, compute cross entropy over (B*T) positions
         """
-        raise NotImplementedError
+        B, T = idx.shape
+
+        # idx and targets are both (B,T) tensor of integers
+        tok_emb = self.token_embedding_table(idx) # (B,T,C)
+        pos_emb = self.position_embedding_table(torch.arange(T, device=device)) # (T,C)
+        x = tok_emb + pos_emb # (B,T,C)
+        x = self.blocks(x) # (B,T,C)
+        x = self.ln_f(x) # (B,T,C)
+        logits = self.lm_head(x) # (B,T,vocab_size)
+
+        if targets is None:
+            loss = None
+        else:
+            B, T, C = logits.shape
+            logits = logits.view(B*T, C)
+            targets = targets.view(B*T)
+            loss = F.cross_entropy(logits, targets)
+
+        return logits, loss
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens: int):
@@ -123,4 +188,17 @@ class SingleHeadLanguageModel(nn.Module):
         - at each step, condition on only the last `block_size` tokens
         - sample one new token and append
         """
-        raise NotImplementedError
+        for _ in range(max_new_tokens):
+            # crop idx to the last block_size tokens
+            idx_cond = idx[:, -block_size:]
+            # get the predictions
+            logits, loss = self(idx_cond)
+            # focus only on the last time step
+            logits = logits[:, -1, :] # becomes (B, C)
+            # apply softmax to get probabilities
+            probs = F.softmax(logits, dim=-1) # (B, C)
+            # sample from the distribution
+            idx_next = torch.multinomial(probs, num_samples=1) # (B, 1)
+            # append sampled index to the running sequence
+            idx = torch.cat((idx, idx_next), dim=1) # (B, T+1)
+        return idx
